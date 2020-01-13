@@ -8,8 +8,10 @@
 #include <math.h>
 #include "rasad.h"
 #define p pair<float,float>
+#define TIMER_INTERVAL 20
+#define TIMER_ID 1
 using namespace std;
-
+int vreme = 0;
 vector<vector<rasad*>> rasadnik;
 pair<int, int> selektovan = make_pair(0,0);
 void selektuj (int i, int j)
@@ -87,6 +89,12 @@ void tajmer(int x)
     printf("%d\n", sec);
 }
 
+void tajmer_vreme(int x)
+{
+    vreme++;
+    glutTimerFunc(TIMER_INTERVAL, tajmer_vreme, TIMER_ID);
+}
+
 
 void generisi_rasadnik(int k, p x, p z){
     rasadnik.resize(k);
@@ -120,16 +128,32 @@ void crtaj_rasadnik()
 void on_display() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glutKeyboardFunc(on_keyboard);
+     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     gluLookAt(0, 2, -5, 
               0, 0, 0,
               0, 1, 0);
     // ovde ide sve sto ces da crtas
     //crtanje
+    glEnable(GL_LIGHTING);
+    glEnable(GL_COLOR_MATERIAL);
+   // GLfloat lpos[] = {0, 4, 0, 1};
+   // glEnable(GL_LIGHT0);
+   // glLightfv(GL_LIGHT0, GL_POSITION, lpos);
+
+    GLfloat lpos1[] = {0, 1, -1, 0};
+    glEnable(GL_LIGHT0);
+    glLightfv(GL_LIGHT0, GL_POSITION, lpos1);
+
+    GLfloat lpos[] = {0, 1, -1, 0};
+    glEnable(GL_LIGHT1);
+    glLightfv(GL_LIGHT1, GL_POSITION, lpos);
+
     glPushMatrix();
     glTranslatef(0, -2, 3);
-    glColor3ub(124,252,0);
+    glColor3ub(50,160,0);
     glBegin(GL_QUADS);
+    glNormal3f(0, 1, 0);
     glVertex3f(-500, 0, 4);
     glVertex3f(-500, 0, -500);
     glVertex3f(500, 0, -500);
@@ -138,10 +162,11 @@ void on_display() {
     
     glColor3ub(34,139,34);
     glBegin(GL_QUADS);
-    glVertex3f(4.5, 0, 3);
-    glVertex3f(4.5, 0, -6);
-    glVertex3f(-4.5, 0, -6);
-    glVertex3f(-4.5, 0, 3);
+    glNormal3f(0, 1, 0);
+    glVertex3f(4.5, 0.01, 3);
+    glVertex3f(4.5, 0.01, -6);
+    glVertex3f(-4.5, 0.01, -6);
+    glVertex3f(-4.5, 0.01, 3);
     glEnd();
     glPopMatrix();
     crtaj_rasadnik();
@@ -170,11 +195,12 @@ int main(int argc, char** argv) {
     glMatrixMode(GL_PROJECTION);
     gluPerspective(90.0f, 800.0f/600.0f, 0.1f, 250.0f);
     //gluOrtho2D(0, 800, 0, 600);
-    glMatrixMode(GL_MODELVIEW);
+   
     
     glClearColor(135/255.0f,206/255.0f,235/255.0f, 0);
 
     /* Program ulazi u glavnu petlju. */
+    tajmer_vreme(0);
     glutMainLoop();
 
 

@@ -3,6 +3,7 @@
 #include <GL/gl.h>
 #include <GL/freeglut.h>
 using namespace std;
+extern int vreme;
 class rasad
 {
 private:
@@ -44,8 +45,15 @@ public:
 
         glPushMatrix();
         glColor3ub(34,139,34);
-        if(ima_bube)
+        if(ima_bube) {
+            crtaj_bubu();
             glColor3ub(255, 255, 0);
+            rast_drveta -= 0.005;
+            if(rast_drveta <= 0){
+                ima_drvo = false;
+                ima_bube = false;
+            }
+        }
         glTranslatef(pozicija.first, -2 + rast_drveta, pozicija.second);
         glutSolidSphere(0.6, 15, 15);
         glTranslatef(-0.4, 0, 0);
@@ -54,6 +62,77 @@ public:
         glutSolidSphere(0.4, 15, 15);
         glPopMatrix();        
         } 
+    }
+
+    void buba()
+    {
+        glPushMatrix();
+        //buba
+        glutSolidSphere(0.1, 20, 20);
+        glTranslatef(0, 0, -0.075);
+        
+
+        glPushMatrix();
+        //levo oko
+        glColor3f(1, 1, 1);
+        glTranslatef(-0.03,0,0);
+        glutSolidSphere(0.05, 10, 10);
+
+        glPushMatrix();
+        //levo zenica
+        glColor3f(0, 0, 0);
+        glTranslatef(0,0,-0.03);
+        glutSolidSphere(0.025, 10, 10);
+        glPopMatrix();
+
+        glPopMatrix();
+
+        glPushMatrix();
+        //desno oko
+        glColor3f(1, 1, 1);
+        glTranslatef(0.03,0,0);
+        glutSolidSphere(0.05, 10, 10);
+
+        glPushMatrix();
+        //desno zenica
+        glColor3f(0, 0, 0);
+        glTranslatef(0,0,-0.03);
+        glutSolidSphere(0.025, 10, 10);
+        glPopMatrix();
+
+        glPopMatrix();
+
+        glPopMatrix();
+    }
+
+    void crtaj_bubu()
+    {
+        glPushMatrix();
+        //glColor3f(0, 0, 0);
+        glColor3f(rand()%10/10.0, rand()%10/10.0, rand()%10/10.0);
+        glTranslatef(pozicija.first, -2 + rast_drveta, pozicija.second);
+        glRotatef(-vreme*10, 0, 1, 0);
+        glTranslatef(-0.85, 0.0, 0.0);
+        buba();
+        glPopMatrix();
+
+        glPushMatrix();
+        glColor3f(rand()%10/10.0, rand()%10/10.0, rand()%10/10.0);
+        glTranslatef(pozicija.first, -2 + rast_drveta, pozicija.second);
+        glRotatef(-vreme*10.0, 1, 1, 0);
+        glTranslatef(-0.85, 0.0, 0.0);
+        buba();
+        glPopMatrix();
+
+        glPushMatrix();
+        glColor3f(rand()%10/10.0, rand()%10/10.0, rand()%10/10.0);
+        glTranslatef(pozicija.first, -2 + rast_drveta, pozicija.second);
+        glRotatef(-vreme*10.0, 0, 1, 1);
+        glTranslatef(-0.85, 0.0, 0.0);
+        buba();
+        glPopMatrix();
+
+        
     }
 };
 
