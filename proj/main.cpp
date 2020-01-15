@@ -7,11 +7,16 @@
 #include <ctime>
 #include <math.h>
 #include "rasad.h"
+#include "gki.h"
 #define p pair<float,float>
 #define TIMER_INTERVAL 20
 #define TIMER_ID 1
 using namespace std;
 int vreme = 0;
+int poeni=0;
+int kliknut=0;
+int meni=1;
+int visina_prozora=0;
 vector<vector<rasad*>> rasadnik;
 pair<int, int> selektovan = make_pair(0,0);
 void selektuj (int i, int j)
@@ -83,6 +88,7 @@ void tajmer(int x)
 {
     srand(time(NULL));
     int sec = rand() % 5 + 3;
+    if(meni==0)
     glutTimerFunc(sec*1000, dodaj_bube, 0);
     trigger = true;
 
@@ -92,6 +98,7 @@ void tajmer(int x)
 void tajmer_vreme(int x)
 {
     vreme++;
+    if(meni==0)
     glutTimerFunc(TIMER_INTERVAL, tajmer_vreme, TIMER_ID);
 }
 
@@ -124,11 +131,13 @@ void crtaj_rasadnik()
         } 
     }
 }
-
+void meni_display();
 void on_display() {
+    meni=0;
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClearColor(135/255.0f,206/255.0f,235/255.0f, 0);
     glutKeyboardFunc(on_keyboard);
-     glMatrixMode(GL_MODELVIEW);
+    glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     gluLookAt(0, 2, -5, 
               0, 0, 0,
@@ -137,6 +146,7 @@ void on_display() {
     //crtanje
     glEnable(GL_LIGHTING);
     glEnable(GL_COLOR_MATERIAL);
+    glEnable(GL_DEPTH_TEST);
    // GLfloat lpos[] = {0, 4, 0, 1};
    // glEnable(GL_LIGHT0);
    // glLightfv(GL_LIGHT0, GL_POSITION, lpos);
@@ -171,9 +181,65 @@ void on_display() {
     glPopMatrix();
     crtaj_rasadnik();
 
+
+    //postavljamo parametre za opengl i stavljamo ortografsku projekciju
+   
+     glDisable(GL_LIGHTING);
+     glDisable(GL_DEPTH_TEST);
+     glLoadIdentity();
+     glMatrixMode(GL_PROJECTION);
+     glLoadIdentity();
+     gluOrtho2D(0, 800, 0, 600);
+     glMatrixMode(GL_MODELVIEW);
+     crtajPanel(660,560,115,100);
+     crtajText(670,570,"POENI:"+to_string(poeni));
+     if(dugme(0,570,100,30,"izadji")){
+	glutDisplayFunc(meni_display);
+    	glutKeyboardFunc(NULL);
+     }
+
+   //vracamo perspektivnu projekciju
+     glMatrixMode(GL_PROJECTION);
+     glLoadIdentity();
+     gluPerspective(90.0f, 800.0f/600.0f, 0.1f, 250.0f);
+//reset mis kliknut 
+    kliknut=0;
     if(!trigger)
         tajmer(0);
+    glutSwapBuffers();
+    glutPostRedisplay();
+}
 
+void meni_display() {
+	//crtamo glavni meni
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClearColor(0.5f,0.8f,0.48f,1);
+
+    glDisable(GL_LIGHTING);
+     glDisable(GL_DEPTH_TEST);
+     glLoadIdentity();
+     glMatrixMode(GL_PROJECTION);
+     glLoadIdentity();
+     gluOrtho2D(0, 800, 0, 600);
+     glMatrixMode(GL_MODELVIEW);
+     crtajPanel(300,50,200,500);
+
+     //pokrecemo nivo i pokrecemo vreme za tajmer i generisemo teren
+     if(dugme(325,485,150,45,"igraj")){
+	generisi_rasadnik(4, make_pair(-4, 4), make_pair(-2, 6));
+	meni=0;
+	poeni=0;
+	tajmer_vreme(0);
+	glutDisplayFunc(on_display);
+        glutKeyboardFunc(on_keyboard);
+     }
+     
+     if(dugme(325,70,150,45,"izadji")){
+	exit(EXIT_FAILURE);
+     }
+
+    meni=1;
+    kliknut=0;
     glutSwapBuffers();
     glutPostRedisplay();
 }
@@ -187,20 +253,18 @@ int main(int argc, char** argv) {
     glutInitWindowSize(800, 600);
     glutInitWindowPosition(100, 100);
     glutCreateWindow(argv[0]);
-    generisi_rasadnik(4, make_pair(-4, 4), make_pair(-2, 6));
     /* Registruju se callback funkcije. */
     glEnable(GL_DEPTH_TEST);
-    glutDisplayFunc(on_display);
-    glutKeyboardFunc(on_keyboard);
+    glutDisplayFunc(meni_display);
+    glutKeyboardFunc(NULL);
     glMatrixMode(GL_PROJECTION);
     gluPerspective(90.0f, 800.0f/600.0f, 0.1f, 250.0f);
     //gluOrtho2D(0, 800, 0, 600);
-   
-    
-    glClearColor(135/255.0f,206/255.0f,235/255.0f, 0);
+    visina_prozora=600;
+    glutMouseFunc(GKImouse);
+    glutPassiveMotionFunc(GKpasmouse);
 
     /* Program ulazi u glavnu petlju. */
-    tajmer_vreme(0);
     glutMainLoop();
 
 
