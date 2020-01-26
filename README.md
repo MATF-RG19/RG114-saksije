@@ -1,6 +1,6 @@
 # RG114-saksije
 Pokretanje:  
-  Pozicionirati se u terminalu u maticni folder i ukucati komandu ./igrica.  
+  Pozicionirati se u terminalu u maticni folder i ukucati komandu make, pa zatim ./igrica.  
  Komande:  
   -W, A, S, D - kretanje po mrezi  
   -enter - sadjenje drveta  
