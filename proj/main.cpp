@@ -75,15 +75,17 @@ void tajmer_kamera(int x){
  else {brojac=100;
  pokret=false;}
 }
-//stoperica za vracanje kamere unazad
+//vracanje kamere unazad
 void tajmer_kamera_nazad(int x){
  if(brojac>0){
    brojac--; 
    pokret=true;
    glutTimerFunc(TIMER_INTERVAL,tajmer_kamera_nazad,3);
  }
- else {brojac=0;
- pokret=false;}
+ else {
+     brojac=0;
+     pokret=false;
+     }
 }
 
 static void on_keyboard(unsigned char key, int x, int y) {
@@ -128,7 +130,7 @@ void dodaj_bube(int x)
     trigger = false;
 }
 
-//stoperica za generisanje bubica
+//generisanje bubica
 void tajmer(int x)
 {   if(!kraj){
     srand(time(NULL));
@@ -140,7 +142,7 @@ void tajmer(int x)
 
     }
 }
-//funkcija za tok vremena kao stoperica
+//funkcija za merenje proteklog vremena u igri
 void tajmer_vreme(int x)
 {   if(!kraj){
     vreme++;
@@ -209,14 +211,10 @@ void on_display() {
     gluLookAt(0, 2+(3*sin(brojac*(3.14/2.0)/100)), -5+(4*sin(brojac*(3.14/2.0)/100)), 
               0, 0, 0,
               0, 1, 0);
-    // ovde ide sve sto ces da crtas
-    //crtanje
+    
     glEnable(GL_LIGHTING);
     glEnable(GL_COLOR_MATERIAL);
     glEnable(GL_DEPTH_TEST);
-   // GLfloat lpos[] = {0, 4, 0, 1};
-   // glEnable(GL_LIGHT0);
-   // glLightfv(GL_LIGHT0, GL_POSITION, lpos);
 
     GLfloat lpos1[] = {0, 1, -1, 0};
     glEnable(GL_LIGHT0);
@@ -275,7 +273,7 @@ void on_display() {
 
 
     //postavljamo parametre za opengl i stavljamo ortografsku projekciju
-   	//krecemo da crtamo gki
+   	//krecemo da crtamo GKI
      glDisable(GL_LIGHTING);
      glDisable(GL_DEPTH_TEST);
      glLoadIdentity();
@@ -304,7 +302,8 @@ void on_display() {
 	if(poeni>high_score){
 	high_score=poeni;
 	FILE *file=fopen("rezultat.txt","w+");
-	fprintf(file,"%d ",high_score);
+    if(file != nullptr)
+	    fprintf(file,"%d ",high_score);
 	fclose(file);
 	}
 	kraj=true;
@@ -318,7 +317,7 @@ void on_display() {
      glMatrixMode(GL_PROJECTION);
      glLoadIdentity();
      gluPerspective(90.0f, (sirina_prozora+0.0)/(visina_prozora+0.0), 0.1f, 250.0f);
-//reset mis kliknut 
+   //reset mis kliknut 
     kliknut=0;
     if(!trigger)
         tajmer(0);

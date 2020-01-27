@@ -46,7 +46,7 @@ void crtajPanel(float x,float y,float sirina,float visina){
 }
 
 
-//uzimamo id za teksturu i crtamo ka sliku na 2d ekranu
+//crtaju se "zivoti" u uglu ekrana
 void slika(int x,int y,int width,int height,unsigned int im){
 glColor3f(1,1,1);
 glEnable(GL_BLEND);
@@ -67,8 +67,8 @@ glDisable(GL_BLEND);
 }
 
 
-//proveravamo gde je mis i da li je kliknut u zavisnosti od toga vracamo true
-//ili false i bojimo drugacije
+//proveravamo gde je mis i da li je kliknut;
+//u zavisnosti od toga vracamo true ili false i bojimo drugacije
 bool dugme(float x,float y,float sirina,float visina,string txt){
  //pozadina
  bool unutra=mouse_inside(x,y,sirina,visina);
@@ -105,20 +105,21 @@ bool dugme(float x,float y,float sirina,float visina,string txt){
  	}
  else 
 	glColor3f(0,0,0);
- //stavljamo text na sredinu
- float t_x=sirina/2.0-(txt.size()*10/2.0);
- float t_y=visina/2.0-6;
+ //stavljamo tekst na sredinu
+ float t_x = sirina/2.0-(txt.size()*10/2.0);
+ float t_y = visina/2.0-6;
  glRasterPos2f(x+t_x,y+t_y);
  for(auto it=txt.begin();it!=txt.end();it++)
- glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24,*it);
+    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24,*it);
+    
  return unutra && kliknut;
 }
 //postavljamo pozicije misa
 void GKpasmouse(int x, int y){
 	mis_x=x;
-        mis_y=visina_prozora-y;
+  mis_y=visina_prozora-y;
 }
-//funkcija za mis da li je kliknut ili ne
+//da li je kliknut mis
 //na kraju svakog rendera vracamo na 0
 void GKImouse(int button, int state, int x, int y)
 {
